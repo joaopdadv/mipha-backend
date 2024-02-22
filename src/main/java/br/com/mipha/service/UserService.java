@@ -1,10 +1,7 @@
 package br.com.mipha.service;
 
 import br.com.mipha.entity.team.Team;
-import br.com.mipha.entity.user.User;
-import br.com.mipha.entity.user.UserPutRequestDTO;
-import br.com.mipha.entity.user.UserRequestDTO;
-import br.com.mipha.entity.user.UserResponseDTO;
+import br.com.mipha.entity.user.*;
 import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -122,5 +119,13 @@ public class UserService {
             return user;
         }
 
+    public UserNoTeamsResponseDTO userEntityToNoTeamResponse(User user) {
+        UserNoTeamsResponseDTO responseDTO = new UserNoTeamsResponseDTO();
+        responseDTO.setId(user.getId());
+        responseDTO.setName(user.getName());
+        responseDTO.setLastName(user.getLastName());
+        responseDTO.setEmail(user.getEmail());
 
+        return responseDTO;
+    }
 }

@@ -64,6 +64,44 @@ public class TeamService {
         }
     }
 
+    public TeamResponseDTO addUser(String idTeam, String idUser) {
+        Optional<Team> teamExists = teamRepository.findById(idTeam);
+        Optional<User> userExists = userRepository.findById(idUser);
+
+        if(teamExists.isPresent() && userExists.isPresent()){
+
+            Team team = teamExists.get();
+            User user = userExists.get();
+
+            List<User> teamUsers = team.getUsers();
+            List<Team> userTeams = user.getTeams();
+
+            boolean userAlreadyExists = teamUsers.stream()
+                    .anyMatch(u -> u.getId().equals(user.getId()));
+            boolean teamAlreadyExists = userTeams.stream()
+                    .anyMatch(t -> t.getId().equals(team.getId()));
+
+            if(userAlreadyExists && teamAlreadyExists){
+                return null;
+            }
+
+            if (!userAlreadyExists) {
+                teamUsers.add(user);
+                team.setUsers(teamUsers);
+                teamRepository.save(team);
+            }
+
+            if (!teamAlreadyExists) {
+                userTeams.add(team);
+                user.setTeams(userTeams);
+                userRepository.save(user);
+            }
+
+            return teamEntityToResponse(team);
+        }
+        return null;
+    }
+
     private Team teamRequestToEntity(TeamRequestDTO request){
         Team team = new Team();
         Optional<User> owner = userRepository.findById(request.getOwnerId());
@@ -82,13 +120,14 @@ public class TeamService {
 
         response.setId(team.getId());
         response.setName(team.getName());
-        response.setOwner(userService.userEntityToResponse(team.getOwner()));
+        response.setOwner(userService.userEntityToNoTeamResponse(team.getOwner()));
         response.setUsers(team.getUsers()
                 .stream()
-                .map(e -> userService.userEntityToResponse(e))
+                .map(e -> userService.userEntityToNoTeamResponse(e))
                 .collect(Collectors.toList()));
 
         return response;
     }
+
 
 }

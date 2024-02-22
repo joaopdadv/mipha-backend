@@ -63,6 +63,16 @@ public class TeamController {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .build();
+    }
 
+    @PutMapping("/{idTeam}/{idUser}")
+    public ResponseEntity<TeamResponseDTO> addUserToTeam(
+            @PathVariable String idTeam,
+            @PathVariable String idUser
+    ){
+
+        TeamResponseDTO response = teamService.addUser(idTeam, idUser);
+
+        return null;
     }
 }
