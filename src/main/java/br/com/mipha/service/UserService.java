@@ -1,9 +1,11 @@
 package br.com.mipha.service;
 
+import br.com.mipha.entity.team.Team;
 import br.com.mipha.entity.user.User;
 import br.com.mipha.entity.user.UserPutRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
+import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
         private final UserRepository userRepository;
+        private final TeamRepository teamRepository;
 
         public List<UserResponseDTO> getAllUsers(){
             List<User> users = userRepository.findAll();
@@ -67,6 +70,17 @@ public class UserService {
             try {
                 Optional<User> user = userRepository.findById(id);
                 if(user.isPresent()){
+
+                    //Deletes or changes the owner of the user's owned teams
+                    List<Team> teams = teamRepository.findByOwner(user.get().getId());
+
+                    teams.forEach(e -> {
+                        if(e.getUsers().isEmpty()){
+                            teamRepository.deleteById(e.getId());
+                        }
+                        //TODO: else turn some team user into the owner
+                    });
+
                     userRepository.deleteById(id);
                     return true;
                 }
