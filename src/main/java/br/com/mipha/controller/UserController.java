@@ -61,4 +61,19 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUser(@PathVariable String id){
+        Boolean delete = userService.deleteUser(id);
+
+        if (delete){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .build();
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+    }
 }

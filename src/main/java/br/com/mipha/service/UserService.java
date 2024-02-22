@@ -28,6 +28,14 @@ public class UserService {
         }
 
         public UserResponseDTO createUser(UserRequestDTO requestDTO) {
+
+            if (requestDTO == null || requestDTO.getName() == null ||
+                    requestDTO.getLastName() == null ||
+                    requestDTO.getEmail() == null ||
+                    requestDTO.getPassword() == null) {
+                return null;
+            }
+
             Optional<User> isUserInDB = userRepository.findByEmail(requestDTO.getEmail());
 
             if (isUserInDB.isPresent()) {
@@ -53,6 +61,19 @@ public class UserService {
                 return null;
             }
 
+        }
+
+        public Boolean deleteUser(String id){
+            try {
+                Optional<User> user = userRepository.findById(id);
+                if(user.isPresent()){
+                    userRepository.deleteById(id);
+                    return true;
+                }
+                return false;
+            }catch (IllegalArgumentException e){
+                return false;
+            }
         }
 
         private User patchToEntity(UserPatchRequestDTO request, User user){
