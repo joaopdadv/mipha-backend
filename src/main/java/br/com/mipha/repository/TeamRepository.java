@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.UUID;
 
-public interface TeamRepository extends MongoRepository<Team, UUID> {
+public interface TeamRepository extends MongoRepository<Team, String> {
 }

@@ -1,6 +1,7 @@
 package br.com.mipha.controller;
 
 import br.com.mipha.entity.user.User;
+import br.com.mipha.entity.user.UserPatchRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
 import br.com.mipha.service.UserService;
@@ -8,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,4 +41,17 @@ public class UserController {
                 .body(response);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> editUser(
+            @PathVariable String id,
+            @RequestBody UserPatchRequestDTO request) {
+
+        UserResponseDTO response = userService.editUser(id, request);
+
+        if (response != null) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

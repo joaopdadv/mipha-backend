@@ -1,6 +1,7 @@
 package br.com.mipha.service;
 
 import br.com.mipha.entity.user.User;
+import br.com.mipha.entity.user.UserPatchRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
 import br.com.mipha.repository.UserRepository;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +22,7 @@ public class UserService {
             List<User> users = userRepository.findAll();
 
             return users.stream()
-                    .map(e -> toResponseDto(e))
+                    .map(e -> entityToResponse(e))
                     .collect(Collectors.toList());
         }
 
@@ -28,13 +30,39 @@ public class UserService {
 
             User user = requestToEntity(requestDTO);
             userRepository.save(user);
-            return toResponseDto(user);
+            return entityToResponse(user);
         }
 
-        private UserResponseDTO toResponseDto(User user){
+        public UserResponseDTO editUser(String id, UserPatchRequestDTO request) {
+            try{
+                User user = userRepository.findById(id).get();
+
+                user = patchToEntity(request,  user);
+                userRepository.save(user);
+
+                UserResponseDTO response = entityToResponse(user);
+
+                return response;
+            }catch (NoSuchElementException e){
+                return null;
+            }
+
+        }
+
+        private User patchToEntity(UserPatchRequestDTO request, User user){
+            User response = user;
+
+            response.setName(request.getName());
+            response.setLastName(request.getLastName());
+
+            return response;
+        }
+
+        private UserResponseDTO entityToResponse(User user){
             UserResponseDTO responseDTO = new UserResponseDTO();
             responseDTO.setId(user.getId());
             responseDTO.setName(user.getName());
+            responseDTO.setLastName(user.getLastName());
             responseDTO.setEmail(user.getEmail());
             responseDTO.setTeams(user.getTeams());
 
@@ -46,10 +74,12 @@ public class UserService {
             User user = new User();
 
             user.setName(requestDTO.getName());
+            user.setLastName(requestDTO.getLastName());
             user.setEmail(requestDTO.getEmail());
             user.setPassword(requestDTO.getPassword());
 
             return user;
         }
+
 
 }
