@@ -1,7 +1,6 @@
 package br.com.mipha.controller;
 
-import br.com.mipha.entity.user.User;
-import br.com.mipha.entity.user.UserPatchRequestDTO;
+import br.com.mipha.entity.user.UserPutRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
 import br.com.mipha.service.UserService;
@@ -51,7 +50,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> editUser(
             @PathVariable String id,
-            @RequestBody UserPatchRequestDTO request) {
+            @RequestBody UserPutRequestDTO request) {
 
         UserResponseDTO response = userService.editUser(id, request);
 

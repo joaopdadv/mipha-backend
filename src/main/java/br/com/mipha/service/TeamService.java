@@ -4,13 +4,14 @@ import br.com.mipha.entity.team.Team;
 import br.com.mipha.entity.team.TeamRequestDTO;
 import br.com.mipha.entity.team.TeamResponseDTO;
 import br.com.mipha.entity.user.User;
-import br.com.mipha.entity.user.UserResponseDTO;
 import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,20 +32,49 @@ public class TeamService {
 
     public TeamResponseDTO createTeam(TeamRequestDTO request){
         Team team = teamRequestToEntity(request);
-        teamRepository.save(team);
 
-        TeamResponseDTO response = teamEntityToResponse(team);
-        return response;
+        if(team != null){
+            teamRepository.save(team);
+
+            TeamResponseDTO response = teamEntityToResponse(team);
+            return response;
+        }
+
+        return null;
+    }
+
+    public TeamResponseDTO editTeam(TeamRequestDTO request, String id) {
+
+        try{
+            Team team = teamRepository.findById(id).get();
+            Optional<User> owner = userRepository.findById(request.getOwnerId());
+
+            if(owner.isPresent()){
+                team.setName(request.getName());
+                team.setOwner(owner.get());
+
+                teamRepository.save(team);
+
+                return teamEntityToResponse(team);
+            }
+
+            return null;
+        }catch (NoSuchElementException e){
+            return null;
+        }
     }
 
     private Team teamRequestToEntity(TeamRequestDTO request){
         Team team = new Team();
-        User owner = userRepository.findById(request.getOwnerId()).get();
+        Optional<User> owner = userRepository.findById(request.getOwnerId());
 
-        team.setName(request.getName());
-        team.setOwner(owner);
+        if(owner.isPresent()){
+            team.setOwner(owner.get());
+            team.setName(request.getName());
+            return team;
+        }
 
-        return team;
+        return null;
     }
 
     private TeamResponseDTO teamEntityToResponse(Team team){
@@ -60,6 +90,5 @@ public class TeamService {
 
         return response;
     }
-
 
 }

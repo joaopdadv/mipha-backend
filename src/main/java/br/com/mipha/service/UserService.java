@@ -1,7 +1,7 @@
 package br.com.mipha.service;
 
 import br.com.mipha.entity.user.User;
-import br.com.mipha.entity.user.UserPatchRequestDTO;
+import br.com.mipha.entity.user.UserPutRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
 import br.com.mipha.repository.UserRepository;
@@ -47,11 +47,11 @@ public class UserService {
             }
         }
 
-        public UserResponseDTO editUser(String id, UserPatchRequestDTO request) {
+        public UserResponseDTO editUser(String id, UserPutRequestDTO request) {
             try{
                 User user = userRepository.findById(id).get();
 
-                user = patchToEntity(request,  user);
+                user = userPutToEntity(request,  user);
                 userRepository.save(user);
 
                 UserResponseDTO response = userEntityToResponse(user);
@@ -76,7 +76,7 @@ public class UserService {
             }
         }
 
-        private User patchToEntity(UserPatchRequestDTO request, User user){
+        private User userPutToEntity(UserPutRequestDTO request, User user){
             User response = user;
 
             response.setName(request.getName());
