@@ -23,7 +23,7 @@ public class UserService {
             List<User> users = userRepository.findAll();
 
             return users.stream()
-                    .map(e -> entityToResponse(e))
+                    .map(e -> userEntityToResponse(e))
                     .collect(Collectors.toList());
         }
 
@@ -41,9 +41,9 @@ public class UserService {
             if (isUserInDB.isPresent()) {
                 return null;
             } else {
-                User user = requestToEntity(requestDTO);
+                User user = userRequestToEntity(requestDTO);
                 userRepository.save(user);
-                return entityToResponse(user);
+                return userEntityToResponse(user);
             }
         }
 
@@ -54,7 +54,7 @@ public class UserService {
                 user = patchToEntity(request,  user);
                 userRepository.save(user);
 
-                UserResponseDTO response = entityToResponse(user);
+                UserResponseDTO response = userEntityToResponse(user);
 
                 return response;
             }catch (NoSuchElementException e){
@@ -85,7 +85,7 @@ public class UserService {
             return response;
         }
 
-        private UserResponseDTO entityToResponse(User user){
+        public UserResponseDTO userEntityToResponse(User user){
             UserResponseDTO responseDTO = new UserResponseDTO();
             responseDTO.setId(user.getId());
             responseDTO.setName(user.getName());
@@ -96,7 +96,7 @@ public class UserService {
             return responseDTO;
         }
 
-        private User requestToEntity(UserRequestDTO requestDTO){
+        private User userRequestToEntity(UserRequestDTO requestDTO){
 
             User user = new User();
 
