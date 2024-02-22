@@ -36,9 +36,16 @@ public class UserController {
 
         UserResponseDTO response = userService.createUser(user);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        if(response != null){
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(response);
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+
     }
 
     @PutMapping("/{id}")

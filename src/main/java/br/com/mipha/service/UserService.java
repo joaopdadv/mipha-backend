@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,10 +28,15 @@ public class UserService {
         }
 
         public UserResponseDTO createUser(UserRequestDTO requestDTO) {
+            Optional<User> isUserInDB = userRepository.findByEmail(requestDTO.getEmail());
 
-            User user = requestToEntity(requestDTO);
-            userRepository.save(user);
-            return entityToResponse(user);
+            if (isUserInDB.isPresent()) {
+                return null;
+            } else {
+                User user = requestToEntity(requestDTO);
+                userRepository.save(user);
+                return entityToResponse(user);
+            }
         }
 
         public UserResponseDTO editUser(String id, UserPatchRequestDTO request) {
