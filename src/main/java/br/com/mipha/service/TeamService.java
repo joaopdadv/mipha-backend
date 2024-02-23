@@ -36,7 +36,13 @@ public class TeamService {
         Team team = teamRequestToEntity(request);
 
         if(team != null){
+            User owner = userRepository.findById(team.getOwner().getId()).get();
+            List<Team> teams = owner.getTeams();
+            teams.add(team);
+            owner.setTeams(teams);
+
             teamRepository.save(team);
+            userRepository.save(owner);
 
             TeamResponseDTO response = teamEntityToResponse(team);
             return response;
