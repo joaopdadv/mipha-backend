@@ -1,9 +1,11 @@
 package br.com.mipha.service;
 
 import br.com.mipha.entity.team.Team;
+import br.com.mipha.entity.team.TeamNoUsersResponseDTO;
 import br.com.mipha.entity.team.TeamRequestDTO;
 import br.com.mipha.entity.team.TeamResponseDTO;
 import br.com.mipha.entity.user.User;
+import br.com.mipha.entity.user.UserNoTeamsResponseDTO;
 import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,6 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
 
     public List<TeamResponseDTO> getAll(){
         List<Team> teams = teamRepository.findAll();
@@ -120,14 +121,22 @@ public class TeamService {
 
         response.setId(team.getId());
         response.setName(team.getName());
-        response.setOwner(userService.userEntityToNoTeamResponse(team.getOwner()));
+        response.setOwner(userEntityToNoTeamResponse(team.getOwner()));
         response.setUsers(team.getUsers()
                 .stream()
-                .map(e -> userService.userEntityToNoTeamResponse(e))
+                .map(e -> userEntityToNoTeamResponse(e))
                 .collect(Collectors.toList()));
 
         return response;
     }
 
+    private UserNoTeamsResponseDTO userEntityToNoTeamResponse(User user) {
+        UserNoTeamsResponseDTO responseDTO = new UserNoTeamsResponseDTO();
+        responseDTO.setId(user.getId());
+        responseDTO.setName(user.getName());
+        responseDTO.setLastName(user.getLastName());
+        responseDTO.setEmail(user.getEmail());
 
+        return responseDTO;
+    }
 }

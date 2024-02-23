@@ -1,6 +1,7 @@
 package br.com.mipha.service;
 
 import br.com.mipha.entity.team.Team;
+import br.com.mipha.entity.team.TeamNoUsersResponseDTO;
 import br.com.mipha.entity.user.*;
 import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
@@ -68,14 +69,30 @@ public class UserService {
                 Optional<User> user = userRepository.findById(id);
                 if(user.isPresent()){
 
-                    //Deletes or changes the owner of the user's owned teams
+
                     List<Team> teams = teamRepository.findByOwner(user.get().getId());
 
+                    //Deletes or changes the owner of the user's owned teams
                     teams.forEach(e -> {
                         if(e.getUsers().isEmpty()){
                             teamRepository.deleteById(e.getId());
+                        }else{
+                            List<User> users = e.getUsers();
+
+                            if (users.size() == 1 && users.get(0).getId().equals(user.get().getId())) {
+                                teamRepository.deleteById(e.getId());
+                            } else {
+                                List<User> usersWithoutDeleted = users.stream()
+                                        .filter(u -> !u.getId().equals(user.get().getId()))
+                                        .collect(Collectors.toList());
+                                e.setUsers(usersWithoutDeleted);
+
+                                User owner = usersWithoutDeleted.stream().findAny().get();
+
+                                e.setOwner(owner);
+                                teamRepository.save(e);
+                            }
                         }
-                        //TODO: else turn some team user into the owner
                     });
 
                     userRepository.deleteById(id);
@@ -102,7 +119,9 @@ public class UserService {
             responseDTO.setName(user.getName());
             responseDTO.setLastName(user.getLastName());
             responseDTO.setEmail(user.getEmail());
-            responseDTO.setTeams(user.getTeams());
+            responseDTO.setTeams(user.getTeams().stream()
+                    .map(e -> teamEntityToResponseNoUsers((e)))
+                    .collect(Collectors.toList()));
 
             return responseDTO;
         }
@@ -119,13 +138,12 @@ public class UserService {
             return user;
         }
 
-    public UserNoTeamsResponseDTO userEntityToNoTeamResponse(User user) {
-        UserNoTeamsResponseDTO responseDTO = new UserNoTeamsResponseDTO();
-        responseDTO.setId(user.getId());
-        responseDTO.setName(user.getName());
-        responseDTO.setLastName(user.getLastName());
-        responseDTO.setEmail(user.getEmail());
+        private TeamNoUsersResponseDTO teamEntityToResponseNoUsers(Team team){
+            TeamNoUsersResponseDTO response = new TeamNoUsersResponseDTO();
 
-        return responseDTO;
-    }
+            response.setId(team.getId());
+            response.setName(team.getName());
+
+            return response;
+        }
 }
