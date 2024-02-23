@@ -65,12 +65,11 @@ public class TeamController {
                 .build();
     }
 
-    @PutMapping("/{idTeam}/{idUser}")
+    @PutMapping("/addUser/{idTeam}/{idUser}")
     public ResponseEntity<TeamResponseDTO> addUserToTeam(
             @PathVariable String idTeam,
             @PathVariable String idUser
     ){
-
         TeamResponseDTO response = teamService.addUser(idTeam, idUser);
 
         if(response != null){
@@ -81,6 +80,24 @@ public class TeamController {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .build();
+    }
+
+    @PutMapping("/removeUser/{idTeam}/{idUser}")
+    public ResponseEntity<TeamResponseDTO> removeUserFromTeam(
+            @PathVariable String idTeam,
+            @PathVariable String idUser
+    ){
+        TeamResponseDTO response = teamService.removeUser(idTeam, idUser);
+
+        if(response != null){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(response);
+        }
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .build();
+
     }
 
     @DeleteMapping("/{id}")

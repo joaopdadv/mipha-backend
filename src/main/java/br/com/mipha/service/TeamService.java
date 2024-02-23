@@ -127,13 +127,46 @@ public class TeamService {
 
                     userRepository.save(user);
                 }
-
                 teamRepository.deleteById(id);
             }
             return team.isPresent();
         }catch (IllegalArgumentException e){
             return false;
         }
+    }
+
+    public TeamResponseDTO removeUser(String idTeam, String idUser) {
+        Optional<Team> teamOptional = teamRepository.findById(idTeam);
+        Optional<User> userOptional = userRepository.findById(idUser);
+
+        if(teamOptional.isPresent() && userOptional.isPresent()){
+           Team team = teamOptional.get();
+           User user = userOptional.get();
+
+           if(team.getOwner().getId().equals(user.getId())){
+               return null;
+           }
+
+           List<User> teamUsers = team.getUsers()
+                   .stream()
+                   .filter(u -> !u.getId().equals(user.getId()))
+                   .toList();
+
+           team.setUsers(teamUsers);
+           teamRepository.save(team);
+
+           List<Team> teamsUser = user.getTeams()
+                   .stream()
+                   .filter(t -> !t.getId().equals(team.getId()))
+                   .toList();
+
+           user.setTeams(teamsUser);
+           userRepository.save(user);
+
+            return teamEntityToResponse(team);
+        }
+
+        return null;
     }
 
     private Team teamRequestToEntity(TeamRequestDTO request){
@@ -177,6 +210,7 @@ public class TeamService {
 
         return responseDTO;
     }
+
 
 
 }
