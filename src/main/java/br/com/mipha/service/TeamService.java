@@ -11,6 +11,7 @@ import br.com.mipha.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -103,13 +104,44 @@ public class TeamService {
         return null;
     }
 
+    public Boolean deleteTeam(String id) {
+
+        try{
+            Optional<Team> team = teamRepository.findById(id);
+
+            if(team.isPresent()){
+                List<User> users = team.get().getUsers();
+
+                for(User user : users){
+                    List<Team> teams = user.getTeams();
+
+                    user.setTeams(teams.stream()
+                            .filter(t -> !t.getId().equals(team.get().getId()))
+                            .collect(Collectors.toList()));
+
+                    userRepository.save(user);
+                }
+
+                teamRepository.deleteById(id);
+            }
+            return team.isPresent();
+        }catch (IllegalArgumentException e){
+            return false;
+        }
+    }
+
     private Team teamRequestToEntity(TeamRequestDTO request){
         Team team = new Team();
         Optional<User> owner = userRepository.findById(request.getOwnerId());
 
         if(owner.isPresent()){
+            List<User> users = new ArrayList<>();
+            users.add(owner.get());
+
+
             team.setOwner(owner.get());
             team.setName(request.getName());
+            team.setUsers(users);
             return team;
         }
 
@@ -139,4 +171,6 @@ public class TeamService {
 
         return responseDTO;
     }
+
+
 }

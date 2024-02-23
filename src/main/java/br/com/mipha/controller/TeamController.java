@@ -82,4 +82,22 @@ public class TeamController {
                 .status(HttpStatus.BAD_REQUEST)
                 .build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteTeam(
+            @PathVariable String id
+    ){
+
+        Boolean delete = teamService.deleteTeam(id);
+
+        if(delete){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .build();
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .build();
+    }
 }
