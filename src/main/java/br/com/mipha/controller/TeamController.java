@@ -73,6 +73,13 @@ public class TeamController {
 
         TeamResponseDTO response = teamService.addUser(idTeam, idUser);
 
-        return null;
+        if(response != null){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(response);
+        }
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .build();
     }
 }
