@@ -61,7 +61,6 @@ public class UserService {
             }catch (NoSuchElementException e){
                 return null;
             }
-
         }
 
         public Boolean deleteUser(String id){
@@ -113,7 +112,7 @@ public class UserService {
             return response;
         }
 
-        public UserResponseDTO userEntityToResponse(User user){
+        private UserResponseDTO userEntityToResponse(User user){
             UserResponseDTO responseDTO = new UserResponseDTO();
             responseDTO.setId(user.getId());
             responseDTO.setName(user.getName());

@@ -1,12 +1,10 @@
 package br.com.mipha.user;
 
-import br.com.mipha.controller.TeamController;
 import br.com.mipha.controller.UserController;
 import br.com.mipha.entity.team.TeamNoUsersResponseDTO;
 import br.com.mipha.entity.user.UserPutRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
-import br.com.mipha.service.TeamService;
 import br.com.mipha.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
