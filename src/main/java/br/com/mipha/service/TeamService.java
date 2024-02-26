@@ -58,12 +58,19 @@ public class TeamService {
             Optional<User> owner = userRepository.findById(request.getOwnerId());
 
             if(owner.isPresent()){
-                team.setName(request.getName());
-                team.setOwner(owner.get());
 
-                teamRepository.save(team);
+                boolean userAlreadyExists = team.getUsers().stream()
+                        .anyMatch(u -> u.getId().equals(owner.get().getId()));
 
-                return teamEntityToResponse(team);
+                if(userAlreadyExists){
+                    team.setName(request.getName());
+                    team.setOwner(owner.get());
+
+                    teamRepository.save(team);
+
+                    return teamEntityToResponse(team);
+                }
+                return null;
             }
 
             return null;
