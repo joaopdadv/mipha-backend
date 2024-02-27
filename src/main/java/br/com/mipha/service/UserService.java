@@ -112,7 +112,7 @@ public class UserService {
             return response;
         }
 
-        private UserResponseDTO userEntityToResponse(User user){
+        public UserResponseDTO userEntityToResponse(User user){
             UserResponseDTO responseDTO = new UserResponseDTO();
             responseDTO.setId(user.getId());
             responseDTO.setName(user.getName());
