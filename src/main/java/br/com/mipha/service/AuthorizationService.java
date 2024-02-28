@@ -37,11 +37,12 @@ public class AuthorizationService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        System.out.println(username);
         Optional<User> userOptional = userRepository.findByEmail(username);
         if (userOptional.isPresent()){
             return userOptional.get();
         }
-
+        System.out.println("FUDEU");
         return null;
     }
 
