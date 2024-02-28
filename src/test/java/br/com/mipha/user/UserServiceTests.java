@@ -6,6 +6,7 @@ import br.com.mipha.entity.user.User;
 import br.com.mipha.entity.user.UserPutRequestDTO;
 import br.com.mipha.entity.user.UserRequestDTO;
 import br.com.mipha.entity.user.UserResponseDTO;
+import br.com.mipha.enums.UserRole;
 import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
 import br.com.mipha.service.UserService;
@@ -18,10 +19,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class UserServiceTests {
 
@@ -66,8 +64,8 @@ public class UserServiceTests {
         );
 
         mockUsers = Arrays.asList(
-                new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams),
-                new User("2", "Arthur", "Silva", "silba@gmail.com", "123", mockTeams2)
+                new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams, UserRole.ADMIN, new Date(System.currentTimeMillis())),
+                new User("2", "Arthur", "Silva", "silba@gmail.com", "123", mockTeams2, UserRole.ADMIN, new Date(System.currentTimeMillis()))
         );
 
         when(userRepository.findAll()).thenReturn(mockUsers);
@@ -95,7 +93,7 @@ public class UserServiceTests {
         UserResponseDTO mockResponse = new UserResponseDTO("1", "Arthur", "Silba", "joaopdadv@gmail.com", mockTeamsNoUser);
 
         List<Team> mockTeams = new ArrayList<>();
-        Optional<User> mockUser = Optional.of(new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams));
+        Optional<User> mockUser = Optional.of(new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams, UserRole.ADMIN, new Date(System.currentTimeMillis())));
         UserPutRequestDTO mockRequest = new UserPutRequestDTO("Arthur", "Silba");
 
         when(userRepository.findById("1")).thenReturn(mockUser);
@@ -110,13 +108,13 @@ public class UserServiceTests {
     public void deleteUserTest(){
 
         List<Team> mockTeams = new ArrayList<>();
-        Optional<User> mockUser = Optional.of(new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams));
+        Optional<User> mockUser = Optional.of(new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams, UserRole.ADMIN, new Date(System.currentTimeMillis())));
 
         mockTeams = Arrays.asList(
-                new Team("A", "PDI DEVS", mockUser.get(), Arrays.asList(mockUser.get(), new User("2", "Arthur", "Silba", "silba@gmail.com", "123", mockTeams))),
+                new Team("A", "PDI DEVS", mockUser.get(), Arrays.asList(mockUser.get(), new User("2", "Arthur", "Silba", "silba@gmail.com", "123", mockTeams, UserRole.ADMIN, new Date(System.currentTimeMillis())))),
                 new Team("B", "MECA", mockUser.get(), Arrays.asList(mockUser.get()))
         );
-        mockUser = Optional.of(new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams));
+        mockUser = Optional.of(new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", mockTeams, UserRole.ADMIN, new Date(System.currentTimeMillis())));
 
         when(userRepository.findById("1")).thenReturn(mockUser);
         when(teamRepository.findById("A")).thenReturn(Optional.ofNullable(mockTeams.get(0)));

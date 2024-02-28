@@ -5,6 +5,7 @@ import br.com.mipha.entity.team.TeamRequestDTO;
 import br.com.mipha.entity.team.TeamResponseDTO;
 import br.com.mipha.entity.user.User;
 import br.com.mipha.entity.user.UserNoTeamsResponseDTO;
+import br.com.mipha.enums.UserRole;
 import br.com.mipha.repository.TeamRepository;
 import br.com.mipha.repository.UserRepository;
 import br.com.mipha.service.TeamService;
@@ -17,10 +18,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class TeamServiceTests {
 
@@ -41,8 +39,8 @@ public class TeamServiceTests {
     @Test
     public void getAllTeamsTest(){
 
-        User user1 = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>());
-        User user2 = new User("2", "Arthur", "Silba", "silba@gmail.com", "123", new ArrayList<>());
+        User user1 = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
+        User user2 = new User("2", "Arthur", "Silba", "silba@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
 
         List<Team> mockTeams = Arrays.asList(
                 new Team("A", "PDI DEV", user1, Arrays.asList(user1, user2)),
@@ -67,7 +65,7 @@ public class TeamServiceTests {
     @Test
     public void createTeamTest(){
         UserNoTeamsResponseDTO owner = new UserNoTeamsResponseDTO("1", "João Pedro", "De Villa", "joaopdadv@gmail.com");
-        User user = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>());
+        User user = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
 
         TeamRequestDTO mockRequest = new TeamRequestDTO("PDI DEV", "1");
 
@@ -84,8 +82,8 @@ public class TeamServiceTests {
     @Test
     public void editTeamTest(){
 
-        User user1 = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>());
-        User user2 = new User("2", "Arthur", "Silba", "silba@gmail.com", "123", new ArrayList<>());
+        User user1 = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
+        User user2 = new User("2", "Arthur", "Silba", "silba@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
 
         Optional<Team> mockTeam = Optional.of(new Team("A", "MECA", user1, Arrays.asList(user1, user2)));
         TeamRequestDTO mockRequest = new TeamRequestDTO("PDI DEV", "2");
@@ -116,8 +114,8 @@ public class TeamServiceTests {
     @Test
     public void deleteTeamTest(){
 
-        User user1 = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>());
-        User user2 = new User("2", "Arthur", "Silba", "silba@gmail.com", "123", new ArrayList<>());
+        User user1 = new User("1", "João Pedro", "De Villa", "joaopdadv@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
+        User user2 = new User("2", "Arthur", "Silba", "silba@gmail.com", "123", new ArrayList<>(), UserRole.ADMIN, new Date(System.currentTimeMillis()));
 
         Optional<Team> mockTeam = Optional.of(new Team("A", "MECA", user1, Arrays.asList(user1, user2)));
 
